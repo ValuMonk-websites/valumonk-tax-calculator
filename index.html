@@ -128,24 +128,34 @@
 
   /* ---- NPS what-if ---- */
   .npscard{margin-top:20px;text-align:left}
-  .npsslider{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
-  .npsslider-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-  .npslab{font-size:13px;font-weight:600;color:var(--ink)}
+  .npsinputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+  @media(max-width:560px){.npsinputs{grid-template-columns:1fr}}
+  .npsfield label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
   .npstag{font-size:9px;letter-spacing:.5px;text-transform:uppercase;font-weight:700;
     padding:2px 7px;border-radius:100px;margin-left:6px;vertical-align:middle}
   .npstag.old{background:rgba(49,52,149,.1);color:var(--blue)}
   .npstag.both{background:rgba(6,176,80,.12);color:var(--green-deep)}
-  .npsamt{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--blue)}
-  .npsroom{font-size:12px;color:var(--faint)}
-  .npscard input[type=range]{width:100%;accent-color:var(--green);height:6px}
-  .npsticks{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:6px}
+  .npsfield .inp{position:relative}
+  .npsfield .inp .ru{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:15px}
+  .npsfield input[type=number]{width:100%;border:1.5px solid var(--line);border-radius:12px;
+    padding:13px 14px 13px 30px;font-size:18px;font-family:var(--serif);color:var(--ink);outline:none;background:var(--paper)}
+  .npsfield input[type=number]:focus{border-color:var(--green);background:#fff}
+  .npshint{display:block;font-size:11px;color:var(--faint);margin-top:6px;font-style:italic;font-family:var(--serif)}
+  .npsverdict{text-align:center;background:var(--sky);border:1px solid #dce8e0;border-radius:14px;
+    padding:16px;margin-bottom:16px;font-size:15px}
+  .npsverdict b{font-family:var(--serif);font-size:18px}
+  .npsverdict .wn{color:var(--green-deep)}
   .npsgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:560px){.npsgrid{grid-template-columns:1fr}}
-  .npsbox{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff}
+  .npsbox{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff;position:relative}
+  .npsbox.win{border-color:var(--green);background:linear-gradient(180deg,#fff,#f5fcf8)}
   .npsbox .npsh{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);font-weight:700}
-  .npsbox .npsval{font-family:var(--serif);font-size:26px;font-weight:600;margin:6px 0 2px}
-  #npsOld .npsval{color:var(--green-deep)} #npsNew .npsval{color:var(--blue)}
+  .npsbox .npsval{font-family:var(--serif);font-size:26px;font-weight:600;margin:6px 0 2px;color:var(--ink)}
+  .npsbox.win .npsval{color:var(--green-deep)}
   .npsbox .npssub{font-size:12px;color:var(--soft);line-height:1.5}
+  .npsbox .wflag{position:absolute;top:14px;right:14px;font-size:9px;font-weight:700;letter-spacing:.5px;
+    background:var(--green);color:#fff;padding:3px 8px;border-radius:100px;text-transform:uppercase;display:none}
+  .npsbox.win .wflag{display:block}
   .npsexplain{font-size:13px;color:var(--soft);background:var(--sky);border-radius:12px;
     padding:14px 16px;margin:16px 0 0;line-height:1.6;border-left:3px solid var(--blue)}
   .npsexplain b{color:var(--ink)}
@@ -483,37 +493,34 @@
       <span class="dot">₹</span><h2 style="font-size:21px">What if you add NPS?</h2>
     </div>
     <p style="color:var(--soft);font-size:14px;margin:0 0 18px">
-      NPS has two parts that behave <b>differently</b> across the regimes. Drag each to see the tax it saves — old vs new.
+      NPS has two parts that work differently across the regimes. Enter what you'd contribute and see which regime comes out ahead.
     </p>
 
-    <!-- personal NPS slider -->
-    <div class="npsslider">
-      <div class="npsslider-top">
-        <span class="npslab">Your own NPS <span class="npstag old">old only</span></span>
-        <span class="npsamt" id="npsAmt1">₹50,000</span>
+    <div class="npsinputs">
+      <div class="npsfield">
+        <label>Your own NPS <span class="npstag old">old only</span></label>
+        <div class="inp"><span class="ru">₹</span><input type="number" id="npsP" value="50000" min="0"></div>
+        <span class="npshint" id="npsPhint">Section 80CCD-1B · capped at ₹50,000</span>
       </div>
-      <input type="range" id="npsRange1" min="0" max="75000" step="2500" value="50000">
-      <div class="npsticks"><span>₹0</span><span>₹50k cap</span><span>₹75k</span></div>
+      <div class="npsfield">
+        <label>Employer's NPS <span class="npstag both">both regimes</span></label>
+        <div class="inp"><span class="ru">₹</span><input type="number" id="npsE" value="0" min="0"></div>
+        <span class="npshint" id="npsEhint">Section 80CCD-2</span>
+      </div>
     </div>
 
-    <!-- employer NPS slider -->
-    <div class="npsslider">
-      <div class="npsslider-top">
-        <span class="npslab">Employer's NPS <span class="npstag both">both regimes</span></span>
-        <span class="npsamt" id="npsAmt2">₹0</span>
-      </div>
-      <input type="range" id="npsRange2" min="0" max="300000" step="5000" value="0">
-      <div class="npsticks" id="npsTicks2"><span>₹0</span><span>10% / 14% of basic</span></div>
-    </div>
+    <div class="npsverdict" id="npsVerdict"></div>
 
     <div class="npsgrid">
       <div class="npsbox" id="npsOld">
-        <div class="npsh">Tax saved · OLD regime</div>
+        <span class="wflag">Lower</span>
+        <div class="npsh">OLD regime · tax with NPS</div>
         <div class="npsval" id="npsOldSave">—</div>
         <div class="npssub" id="npsOldNote"></div>
       </div>
       <div class="npsbox" id="npsNew">
-        <div class="npsh">Tax saved · NEW regime</div>
+        <span class="wflag">Lower</span>
+        <div class="npsh">NEW regime · tax with NPS</div>
         <div class="npsval" id="npsNewSave">—</div>
         <div class="npssub" id="npsNewNote"></div>
       </div>
@@ -597,8 +604,8 @@ $('yt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)re
   calc();
 });
 $('yrs').addEventListener('input',()=>{S.yrs=+$('yrs').value;$('yrsN').textContent=S.yrs;invest();});
-$('npsRange1').addEventListener('input',npsWhatif);
-$('npsRange2').addEventListener('input',npsWhatif);
+$('npsP').addEventListener('input',npsWhatif);
+$('npsE').addEventListener('input',npsWhatif);
 
 /* year-aware metro-city explanation */
 function updateCityHelp(){
@@ -727,42 +734,41 @@ function calc(){
 /* ---- NPS what-if: tax saved by adding PERSONAL NPS, in each regime ---- */
 function npsWhatif(){
   const d=LAST; if(d.txOld==null)return;
-  const personal=+$('npsRange1').value||0;
-  const employer=+$('npsRange2').value||0;
-  $('npsAmt1').textContent=fmt(personal);
-  $('npsAmt2').textContent=fmt(employer);
+  const personal=Math.min(+$('npsP').value||0,50000);
+  const employer=+$('npsE').value||0;
 
-  // employer NPS slider max & ticks scale to this person's basic
   const empCapOld=Math.round(0.10*d.basic), empCapNew=Math.round(0.14*d.basic);
-  $('npsTicks2').innerHTML=`<span>₹0</span><span>old cap ${fmt(empCapOld)}</span><span>new cap ${fmt(empCapNew)}</span>`;
+  $('npsPhint').textContent='Section 80CCD-1B · capped at ₹50,000'+((+$('npsP').value||0)>50000?' (you entered more — only ₹50k counts)':'');
+  $('npsEhint').textContent='Section 80CCD-2 · cap '+fmt(empCapOld)+' (old) / '+fmt(empCapNew)+' (new)';
 
-  // --- OLD regime deductible: personal (≤50k) + employer (≤10% basic) ---
-  const persOld=Math.min(personal,50000);
+  // deductibles
   const empOld=Math.min(employer,empCapOld);
-  const oldDeduct=persOld+empOld;
-  const oldSave=taxOld(d.txOld,d.age)-taxOld(Math.max(0,d.txOld-oldDeduct),d.age);
-
-  // --- NEW regime deductible: employer only (≤14% basic), personal gives nothing ---
   const empNew=Math.min(employer,empCapNew);
-  const newDeduct=empNew;
-  const newSave=taxNew(d.txNew)-taxNew(Math.max(0,d.txNew-newDeduct));
+  const oldDeduct=personal+empOld;   // personal works only in old
+  const newDeduct=empNew;            // only employer in new
 
-  $('npsOldSave').textContent=oldSave<1?'₹0':'−'+fmt(oldSave);
-  $('npsNewSave').textContent=newSave<1?'₹0':'−'+fmt(newSave);
+  // TOTAL tax in each regime AFTER applying NPS
+  const oldTaxWith=taxOld(Math.max(0,d.txOld-oldDeduct),d.age);
+  const newTaxWith=taxNew(Math.max(0,d.txNew-newDeduct));
+  const oldSave=d.tOld-oldTaxWith, newSave=d.tNew-newTaxWith;
 
-  // breakdown notes: personal vs employer split
-  $('npsOldNote').innerHTML = (persOld>0?'₹'+fmt(persOld).slice(1)+' personal + ':'')
-    +'₹'+fmt(empOld).slice(1)+' employer deductible.';
-  $('npsNewNote').innerHTML = empNew>0
-    ? '₹'+fmt(empNew).slice(1)+' employer NPS only — personal gives nothing here.'
-    : 'Only employer NPS counts in the new regime.';
+  const oldWins=oldTaxWith<newTaxWith, diff=Math.abs(oldTaxWith-newTaxWith);
 
-  // combined explanation
-  let msg='<b>How NPS splits:</b> Your <b>own</b> contribution (80CCD-1B, up to ₹50,000) helps <b>only in the old regime</b>. Your <b>employer\'s</b> contribution (80CCD-2) helps in <b>both</b> — capped at 10% of basic in old ('+fmt(empCapOld)+'), 14% in new ('+fmt(empCapNew)+').';
-  if(oldSave>0||newSave>0){
-    msg+=' <b>Together, NPS saves you '+fmt(oldSave)+' in the old regime and '+fmt(newSave)+' in the new.</b>';
-  }
-  $('npsExplain').innerHTML=msg;
+  $('npsOldSave').textContent=fmt(oldTaxWith);
+  $('npsNewSave').textContent=fmt(newTaxWith);
+  $('npsOld').classList.toggle('win',oldWins);
+  $('npsNew').classList.toggle('win',!oldWins);
+
+  $('npsOldNote').innerHTML='after deducting '+fmt(oldDeduct)+(oldSave>0?' · saves '+fmt(oldSave):'');
+  $('npsNewNote').innerHTML='after deducting '+fmt(newDeduct)+(newSave>0?' · saves '+fmt(newSave):'');
+
+  // single clear verdict
+  $('npsVerdict').innerHTML = diff<1
+    ? 'With this NPS, both regimes cost about the same.'
+    : 'With this NPS, the <b class="wn">'+(oldWins?'old':'new')+' regime</b> is cheaper — <b>'+fmt(diff)+'</b> less tax for the year.';
+
+  // explanation
+  $('npsExplain').innerHTML='<b>How NPS splits:</b> the part <b>you</b> contribute (80CCD-1B, up to ₹50,000) lowers tax <b>only in the old regime</b>. Your <b>employer\'s</b> part (80CCD-2) lowers tax in <b>both</b>, capped at 10% of basic in old ('+fmt(empCapOld)+') and 14% in new ('+fmt(empCapNew)+'). The cards above show each regime\'s <b>final tax</b> once your NPS is applied — lower wins.';
 }
 
 function animatePaths(oldWins){
