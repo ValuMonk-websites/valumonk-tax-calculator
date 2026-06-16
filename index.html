@@ -159,6 +159,9 @@
   .npsexplain{font-size:13px;color:var(--soft);background:var(--sky);border-radius:12px;
     padding:14px 16px;margin:16px 0 0;line-height:1.6;border-left:3px solid var(--blue)}
   .npsexplain b{color:var(--ink)}
+  .nps-extra-save{display:inline-block;margin-top:8px;font-size:13px;font-weight:700;
+    color:var(--green-deep);background:rgba(6,176,80,.1);border:1px solid rgba(6,176,80,.25);
+    border-radius:8px;padding:4px 10px;line-height:1.4}
 
   /* ---- invested value ---- */
   .invest{margin-top:20px;background:var(--blue);color:#fff;border-radius:24px;padding:36px 34px;position:relative;overflow:hidden}
@@ -504,7 +507,7 @@
       </div>
       <div class="npsfield">
         <label>Employer's NPS <span class="npstag both">both regimes</span></label>
-        <div class="inp"><span class="ru">₹</span><input type="number" id="npsE" value="0" min="0"></div>
+        <div class="inp"><span class="ru">₹</span><input type="number" id="npsE" value="84000" min="0"></div>
         <span class="npshint" id="npsEhint">Section 80CCD-2</span>
       </div>
     </div>
@@ -760,7 +763,13 @@ function npsWhatif(){
   $('npsNew').classList.toggle('win',!oldWins);
 
   $('npsOldNote').innerHTML='after deducting '+fmt(oldDeduct)+(oldSave>0?' · saves '+fmt(oldSave):'');
-  $('npsNewNote').innerHTML='after deducting '+fmt(newDeduct)+(newSave>0?' · saves '+fmt(newSave):'');
+
+  // For new regime: show normal saving + bold callout for employer NPS extra benefit
+  const empOnlyNewSave = newDeduct>0 ? newSave : 0;
+  const newNoteExtra = empOnlyNewSave>0
+    ? '<br><span class="nps-extra-save">★ Saves additional '+fmt(empOnlyNewSave)+' in the new regime</span>'
+    : '';
+  $('npsNewNote').innerHTML='after deducting '+fmt(newDeduct)+(newSave>0?' · saves '+fmt(newSave):'')+newNoteExtra;
 
   // single clear verdict
   $('npsVerdict').innerHTML = diff<1
